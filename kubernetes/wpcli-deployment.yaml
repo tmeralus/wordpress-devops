@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: /snap/kompose/19/kompose-linux-amd64 convert -f docker-compose.yml
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: wpcli
+  name: wpcli
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: wpcli
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: /snap/kompose/19/kompose-linux-amd64 convert -f docker-compose.yml
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: wpcli
+    spec:
+      containers:
+      - env:
+        - name: WORDPRESS_DB_HOST
+          value: db
+        - name: WORDPRESS_DB_NAME
+        - name: WORDPRESS_DB_PASSWORD
+        - name: WORDPRESS_DB_USER
+          value: root
+        image: wordpress:cli
+        imagePullPolicy: ""
+        name: wpcli
+        resources: {}
+        volumeMounts:
+        - mountPath: /usr/local/etc/php/conf.d/conf.ini
+          name: wpcli-claim0
+        - mountPath: /var/www/html
+          name: wpcli-claim1
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: wpcli-claim0
+        persistentVolumeClaim:
+          claimName: wpcli-claim0
+      - name: wpcli-claim1
+        persistentVolumeClaim:
+          claimName: wpcli-claim1
+status: {}
